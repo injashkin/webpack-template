@@ -517,7 +517,7 @@ app.get('/register', (req, res) => {
   res.sendFile(__dirname + '/pages/register.html')
 })
 app.post('/register', urlencodedParser, (req, res) => {
-  res.send(`${req.body.firstUserName} - ${req.body.lastUserName}`)
+  res.send(<h1>Пользователь</h1>`${req.body.firstUserName} - ${req.body.lastUserName}`)
 })
 
 app.get('/', function(req, res) {
