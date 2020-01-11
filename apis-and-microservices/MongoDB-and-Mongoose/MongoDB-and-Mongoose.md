@@ -145,7 +145,32 @@ mongoose.connect(process.env.MONGO_URI);
 
 ### CRUD Часть I - создание
 
-Прежде всего нам нужна [схема]https://mongoosejs.com/docs/guide.html. Каждая схема сопоставляется с коллекцией MongoDB. Она определяет форму документов внутри этой коллекции. Схемы - это строительный блок для моделей. Они могут быть вложенными для создания сложных моделей, но в этом случае мы будем держать вещи простыми. Модель позволяет создавать экземпляры ваших объектов, называемых документами.
+Приложения могут использовать различные базы данных, и есть несколько подходов, которые можно использовать для выполнения операций **C**reate, **R**ead, **U**pdate and **D**elete (CRUD) (создать, прочесть, обновить, удалить).
+
+В mongoose все завязано на 2х ключевых понятиях Схема(Schema) – писание сущности и Модель – сама сущность.
+Прежде всего вам нужна [схема]https://mongoosejs.com/docs/guide.html. 
+
+Создадайте схему для комментариев. Для этого в файл `index.js` скопируйте следующее:
+
+```js
+const mongoose = require('mongoose');
+mongoose.connect(process.env.MONGO_URI); 
+
+var UserSchema = new mongoose.Schema( {
+    name: { type: String, default: "hahaha" },
+    age: { type: Number, min: 18, index: true },
+    bio: { type: String, match: /[a-z]/ },
+    date: { type: Date },
+    buff: Buffer
+} );
+```
+
+Каждое поле характеризуется типом SchemaTypes и может иметь дополнительные характеристики: `default`, `min` и `max` (для Number), `match` и `enum` (для String), `index` и `unique` (для индексов).
+
+Подробнее о типах можно почитать [тут](https://mongoosejs.com/docs/schematypes.html).
+
+
+Каждая схема сопоставляется с коллекцией MongoDB. Она определяет форму документов внутри этой коллекции. Схемы - это строительный блок для моделей. Они могут быть вложенными для создания сложных моделей, но в этом случае мы будем держать вещи простыми. Модель позволяет создавать экземпляры ваших объектов, называемых документами.
 
 
 
@@ -193,3 +218,15 @@ const Person = mongoose.model("Person", personSchema);
 
 MongoDB, как и MySQL, может содержать множество баз данных, но вместо таблиц базы данных MongoDB содержат “коллекции”.
 Коллекция - это что-то типа таблицы, только без колонок. Вместо этого каждая строка содержит наборы записей в виде ключ:значение.
+
+
+Найденые ресурсы
+
+* http://www.coldfox.ru/article/5be022d49227d914a1c83fe3/%D0%9F%D0%BE%D0%B4%D1%80%D0%BE%D0%B1%D0%BD%D0%BE%D0%B5-%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE-%D0%BF%D0%BE-MongoDB-Mongoose
+
+
+Используемые ресурсы
+
+* http://stepansuvorov.com/blog/2012/11/mongoose-%D0%B4%D0%BB%D1%8F-mongodb/
+
+* https://developer.mozilla.org/ru/docs/Learn/Server-side/Express_Nodejs/mongoose
