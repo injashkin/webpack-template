@@ -76,11 +76,11 @@ npm install mongoose
 //Подключение к файлу модуля mongoose под именем mongoose
 var mongoose = require('mongoose');
 //Соединение с базой данных `test` на вашем локально запущенном экземпляре MongoDB.
-mongoose.connect('mongodb://localhost/test', {useNewUrlParser: true});
+mongoose.connect('mongodb://127.0.0.1:27017/test', {useNewUrlParser: true});
 var db = mongoose.connection;
-//Если при соединении с БД происходит ошибка выводится сообщение
-db.on('error', console.error.bind(console, 'connection error:'));
-//Если соединение с БД успешно выполняется код в колбеке
+//Если при соединении с БД происходит ошибка выводится сообщение 'MongoDB connection error:'
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+//Если соединение с БД выполнено успешно выполняется код в колбек-функции
 db.once('open', function() {
   // we're connected!
 });
