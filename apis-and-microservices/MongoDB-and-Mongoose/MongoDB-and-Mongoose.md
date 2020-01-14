@@ -78,6 +78,29 @@ MONGO_URI='mongodb+srv://<user>:<password>@cluster0-hsvns.mongodb.net/test?retry
 Обратите внимание: URI окружен одинарными (можно двойными) кавычками; между переменной MONGO_URI и знаком `=`, а также, между знаком `=` и URI не должно быть пробела; замените <user> на имя пользователя, а <password> на свой пароль в MongoDB Atlas. Там не должно быть символов <> (если только они не находятся в вашем пароле).
 
 Обратите внимание, в файле `.env` хранится пароль, поэтому при сохраненинии проекта в репозиторий, данный файл нужно включить в список исключений в файле `.gitignore`.
+
+Для того, чтобы переменные окружения из файла `env` можно было использовать в приложении нужно установить пакет `dotenv`:
+
+```
+npm install dotenv
+```
+
+В файле `package.json` будет добавлена зависимость:
+
+```json
+  "dependencies": {
+    "dotenv": "^8.2.0", 
+  }
+```
+
+Теперь, если вам необходимо использовать какую-нибудь переменную окружения из файла `env` в одном из файлов вашего приложения, вы должны в этом файле просто подключить пакет `dotenv` следующим образом:
+
+```js
+require('dotenv').config();
+```
+
+Теперь все переменные из файла `.env` будут доступны в `process.env`. Чтобы прочитать значение переменной, например, PASSWORD нужно обратиться к свойству `process.env.PASSWORD`.
+
 ## Подключение БД MongoDB с помощью Mongoose
 
 В корне проекта создайте файл `index.js`, в который скопируйте следующий код.
@@ -85,6 +108,8 @@ MONGO_URI='mongodb+srv://<user>:<password>@cluster0-hsvns.mongodb.net/test?retry
 ```js 
 //Подключение к файлу модуля mongoose под именем mongoose
 var mongoose = require('mongoose');
+//Использование пакета dotenv для чтения переменных из файла .env в Node
+require('dotenv').config();
 //Соединение с базой данных
 mongoose.connect(process.env.MONGO_URI);
 var db = mongoose.connection;
@@ -110,12 +135,12 @@ CRUD - это сокращение для операций Create, Read, Update 
 
 Создадайте схему для комментариев.
 
-В корне проекта создайте файл `index.js`, в который скопируйте следующий код.
+В файл `index.js` скопируйте следующий код.
 
 ```js
-//запрос модуля `mongoose` в файл под именем `mongoose`
 const mongoose = require('mongoose');
-//подключение к БД 
+require('dotenv').config();
+
 mongoose.connect(process.env.MONGO_URI); 
 
 var UserSchema = new mongoose.Schema( {
