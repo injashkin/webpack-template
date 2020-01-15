@@ -144,6 +144,7 @@ const mongoose = require('mongoose');
 
 mongoose.connect(process.env.MONGO_URI); 
 
+//Создание схемы
 var UserSchema = new mongoose.Schema( {
     name: { type: String, default: "Анонимный" },
     age: { type: Number, min: 18, index: true },    
@@ -163,7 +164,6 @@ const UserSchema = mongoose.model("UserSchema", UserSchema);
 
 ## Создание и сохранение записи модели
 
-
 ```js
 require('dotenv').config();
 const mongoose = require('mongoose');
@@ -179,19 +179,53 @@ var userSchema = new mongoose.Schema( {
 const userModel = mongoose.model("UserSchema", userSchema);
 
 //Создание экземпляра модели и сохранение его в БД
-var createAndSavePerson = function(done) {
-  var ivanPetrov = new Person({name: "Ivan Petrov", age: 25, date: 12-07-2019});
-
-    ivanPetrov.save(function(err, data) {
+var createAndSaveUser = function(done) {
+  var ivanPetrov = new User({name: "Ivan Petrov", age: 25, date: 12-07-2019});
+  ivanPetrov.save(function(err, data) {
     if (err) return console.error(err);
     done(null, data)
   });
 };
 ```
 
-## Создание многих записей с помощью model.create()
+## Создание нескольких записей с помощью model.create()
 
+```js
+require('dotenv').config();
+const mongoose = require('mongoose');
 
+mongoose.connect(process.env.MONGO_URI); 
+
+var userSchema = new mongoose.Schema( {
+    name: { type: String, default: "Анонимный" },
+    age: { type: Number, min: 18, index: true },    
+    date: { type: Date }    
+});
+
+const userModel = mongoose.model("UserSchema", userSchema);
+
+var createAndSaveUser = function(done) {
+  var ivanPetrov = new User({name: "Ivan Petrov", age: 25, date: 12-07-2019});
+  ivanPetrov.save(function(err, data) {
+    if (err) return console.error(err);
+    done(null, data)
+  });
+};
+
+//Массив объектов
+var arrayUsers = [
+  {name: "Светлана", age: 21, date: 19-05-2019},
+  {name: "Kamila", age: 35, date: 28-07-2019},
+  {name: "Олег", age: 27, date: 01-03-2019}
+];
+
+var createManyUser = function(arrayUsers, done) {
+  User.create(arrayUsers, function (err, user) {
+    if (err) return console.log(err);
+    done(null, user);
+  });
+};
+```
 
 
 
