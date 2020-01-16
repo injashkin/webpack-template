@@ -269,12 +269,10 @@ UserModel.create(arrayUsers, function (err, user) {
 });
 
 //
-var findUserByName = function(userName, done) {
-  User.find({name: userName}, function (err, userFound) {
-    if (err) return console.log(err);
-    done(null, userFound);
-  });
-};
+UserModel.find({name: userName}, function (err, userFound) {
+  if (err) return console.log(err);
+  done(null, userFound);
+});
 ```
 
 
