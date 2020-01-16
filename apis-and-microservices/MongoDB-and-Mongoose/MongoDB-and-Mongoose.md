@@ -69,6 +69,8 @@ npm install mongoose
 }
 ```
 
+## Переменные окружения в файле .env
+
 Для хранения переменных окружения вы будете использовать файл `.env`. Создайте его в корне проекта и скопируйте в него URI базы данных MongoDB Atlas, полученный раннее:
 
 ```
@@ -101,7 +103,7 @@ require('dotenv').config();
 
 Теперь все переменные из файла `.env` будут доступны в `process.env`. Чтобы прочитать значение переменной, например, PASSWORD нужно обратиться к свойству `process.env.PASSWORD`.
 
-## Подключение БД MongoDB с помощью Mongoose
+## Подключение БД MongoDB
 
 В корне проекта создайте файл `index.js`, в который скопируйте следующий код.
 
@@ -117,12 +119,11 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 //Если соединение с БД выполнено успешно выполняется код в колбек-функции
 db.once('open', function() {
-  // we're connected!
+  console.log("we're connected!")
 });
 ```
 
-Как только наше соединение откроется, будет вызван наш обратный вызов. Для краткости давайте предположим, что весь следующий код находится внутри этого обратного вызова.
-
+Как только наше соединение откроется, будет вызван наш колбек.
 
 ## Создание модели
 
@@ -133,23 +134,25 @@ CRUD - это сокращение для операций Create, Read, Update 
 В mongoose все завязано на 2х ключевых понятиях Схема(Schema) – описание сущности и Модель – сама сущность.
 Прежде всего вам нужна [схема]https://mongoosejs.com/docs/guide.html. 
 
-Создадайте схему для комментариев.
+Создадайте схему для комментариев и модель из неё.
 
 В файл `index.js` скопируйте следующий код.
 
 ```js
-const mongoose = require('mongoose');
 require('dotenv').config();
+const mongoose = require('mongoose');
 
 mongoose.connect(process.env.MONGO_URI); 
 
+//Создание схемы
 var UserSchema = new mongoose.Schema( {
-    name: { type: String, default: "hahaha" },
-    age: { type: Number, min: 18, index: true },
-    bio: { type: String, match: /[a-z]/ },
-    date: { type: Date },
-    buff: Buffer
-} );
+    name: { type: String, default: "Анонимный" },
+    age: { type: Number, min: 18, index: true },    
+    date: { type: Date }    
+});
+
+//Создание модели коментариев из схемы.
+const UserSchema = mongoose.model("UserSchema", UserSchema);
 ```
 
 Каждое поле характеризуется типом SchemaTypes и может иметь дополнительные характеристики: `default`, `min` и `max` (для Number), `match` и `enum` (для String), `index` и `unique` (для индексов).
@@ -159,49 +162,71 @@ var UserSchema = new mongoose.Schema( {
 
 Каждая схема сопоставляется с коллекцией MongoDB. Она определяет форму документов внутри этой коллекции. Схемы - это строительный блок для моделей. Они могут быть вложенными для создания сложных моделей, но в этом случае мы будем держать вещи простыми. Модель позволяет создавать экземпляры ваших объектов, называемых документами.
 
-
-```js
-var mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-
-const personSchema = new Schema({
-  name: { type: String, required: true },
-  age: Number,
-  favoriteFoods: [String]
-});
-
-//Создание модели человека из схемы.
-const Person = mongoose.model("Person", personSchema);
-```
-
 ## Создание и сохранение записи модели
 
-
 ```js
-/** 1) Установка и настройка mongoose */
-
+require('dotenv').config();
 const mongoose = require('mongoose');
-mongoose.connect(process.env.MONGO_URI);
 
-/** 2) Создание Модели 'Person' */
-var personSchema = new mongoose.Schema({
-  name: String,
-  age: Number,
-  favoriteFoods: [String]
+mongoose.connect(process.env.MONGO_URI); 
+
+var userSchema = new mongoose.Schema( {
+    name: { type: String, default: "Анонимный" },
+    age: { type: Number, min: 18, index: true },    
+    date: { type: Date }    
 });
 
-/** 3) Создание и сохранение Person */
-var Person = mongoose.model('Person', personSchema);
+const userModel = mongoose.model("UserSchema", userSchema);
 
-var createAndSavePerson = function(done) {
-  var janeFonda = new Person({name: "Jane Fonda", age: 84, favoriteFoods: ["vodka", "air"]});
-
-  janeFonda.save(function(err, data) {
+//Создание экземпляра модели и сохранение его в БД
+var createAndSaveUser = function(done) {
+  var ivanPetrov = new User({name: "Ivan Petrov", age: 25, date: 12-07-2019});
+  ivanPetrov.save(function(err, data) {
     if (err) return console.error(err);
     done(null, data)
   });
 };
 ```
+
+## Создание нескольких записей с помощью model.create()
+
+```js
+require('dotenv').config();
+const mongoose = require('mongoose');
+
+mongoose.connect(process.env.MONGO_URI); 
+
+var userSchema = new mongoose.Schema( {
+    name: { type: String, default: "Анонимный" },
+    age: { type: Number, min: 18, index: true },    
+    date: { type: Date }    
+});
+
+const userModel = mongoose.model("UserSchema", userSchema);
+
+var createAndSaveUser = function(done) {
+  var ivanPetrov = new User({name: "Ivan Petrov", age: 25, date: 12-07-2019});
+  ivanPetrov.save(function(err, data) {
+    if (err) return console.error(err);
+    done(null, data)
+  });
+};
+
+//Массив объектов
+var arrayUsers = [
+  {name: "Светлана", age: 21, date: 19-05-2019},
+  {name: "Kamila", age: 35, date: 28-07-2019},
+  {name: "Олег", age: 27, date: 01-03-2019}
+];
+
+var createManyUser = function(arrayUsers, done) {
+  User.create(arrayUsers, function (err, user) {
+    if (err) return console.log(err);
+    done(null, user);
+  });
+};
+```
+
 
 
 MongoDB, как и MySQL, может содержать множество баз данных, но вместо таблиц базы данных MongoDB содержат “коллекции”.
