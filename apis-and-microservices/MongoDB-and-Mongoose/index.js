@@ -1,7 +1,10 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 
-mongoose.connect(process.env.MONGO_URI); 
+mongoose.connect(process.env.MONGO_URI, function (err) { 
+  if (err) throw err;
+  console.log('Successfully connected');
+}); 
 
 var userSchema = new mongoose.Schema( {
     name: { type: String, default: "Анонимный" },
@@ -11,14 +14,17 @@ var userSchema = new mongoose.Schema( {
 
 const userModel = mongoose.model("UserSchema", userSchema);
 
-var createAndSaveUser = function(done) {
+//var createAndSaveUser = function(done) {
   var ivanPetrov = new User({name: "Ivan Petrov", age: 25, date: 12-07-2019});
-  ivanPetrov.save(function(err, data) {
+  console.log(ivanPetrov);
+  ivanPetrov.save(function(err) {
     if (err) return console.error(err);
-    done(null, data)
+    //done(null, data)
+    console.log('Author successfully saved.');
   });
-};
+//};
 
+/*
 //Массив объектов
 var arrayUsers = [
   {name: "Светлана", age: 21, date: 19-05-2019},
@@ -32,3 +38,4 @@ var createManyUser = function(arrayUsers, done) {
     done(null, user);
   });
 };
+*/
