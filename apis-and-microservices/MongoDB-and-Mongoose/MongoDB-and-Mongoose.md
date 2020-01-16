@@ -141,12 +141,15 @@ CRUD - это сокращение для операций Create, Read, Update 
 require('dotenv').config();
 const mongoose = require('mongoose');
 
-mongoose.connect(process.env.MONGO_URI); 
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true }, function (err) {
+  if (err) throw err;
+  console.log('БД подключена');
+});
 
 //Создание схемы
-var userSchema = new mongoose.Schema( {
+var userSchema = new mongoose.Schema({
   name: { type: String, default: "Анонимный" },
-  age: { type: Number, min: 18, index: true }  
+  age: { type: Number, min: 18, index: true }
 });
 
 //Создание модели из схемы.
@@ -157,7 +160,7 @@ const UserModel = mongoose.model("UserModel", userSchema);
 
 В функции `mongoose.model` первый параметр - это имя модели, второй параметр - имя схемы, из которой создается модель.
 
-Схемы - это строительный блок для моделей. Они могут быть вложенными для создания сложных моделей, но в этом случае мы будем держать вещи простыми. Модель позволяет создавать экземпляры ваших объектов, называемых документами.
+Схемы - это строительный блок для моделей. Модель позволяет создавать экземпляры ваших объектов, называемых документами.
 
 ## Создание и сохранение записи модели
 
@@ -165,23 +168,23 @@ const UserModel = mongoose.model("UserModel", userSchema);
 require('dotenv').config();
 const mongoose = require('mongoose');
 
-mongoose.connect(process.env.MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true}, function (err) { 
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true }, function (err) {
   if (err) throw err;
-  console.log('БД успешно подключена');
-}); 
+  console.log('БД подключена');
+});
 
-var userSchema = new mongoose.Schema( {
+var userSchema = new mongoose.Schema({
   name: { type: String, default: "Анонимный" },
-  age: { type: Number, min: 18, index: true }    
+  age: { type: Number, min: 18, index: true }
 });
 
 const UserModel = mongoose.model("UserModel", userSchema);
 
 //Создание объекта модели
-var ivanPetrov = new UserModel({name: "Ivan Petrov", age: 25, date: 12-07-2019});
+var ivanPetrov = new UserModel({ name: "Ivan Petrov", age: 25, date: 12 - 07 - 2019 });
 
 //Сохранение объекта модели в БД
-ivanPetrov.save(function(err) {
+ivanPetrov.save(function (err) {
   if (err) return console.error(err);
   console.log('Пользователь сохранен');
 });
@@ -235,37 +238,35 @@ UserModel.create(arrayUsers, function (err, user) {
 require('dotenv').config();
 const mongoose = require('mongoose');
 
-mongoose.connect(process.env.MONGO_URI); 
-
-var userSchema = new mongoose.Schema( {
-    name: { type: String, default: "Анонимный" },
-    age: { type: Number, min: 18, index: true },    
-    date: { type: Date }    
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true }, function (err) {
+  if (err) throw err;
+  console.log('БД подключена');
 });
 
-const User = mongoose.model("User", userSchema);
+var userSchema = new mongoose.Schema({
+  name: { type: String, default: "Анонимный" },
+  age: { type: Number, min: 18, index: true }
+});
 
-var createAndSaveUser = function(done) {
-  var ivanPetrov = new User({name: "Ivan Petrov", age: 25, date: 12-07-2019});
-  ivanPetrov.save(function(err, data) {
-    if (err) return console.error(err);
-    done(null, data)
-  });
-};
+const UserModel = mongoose.model("UserModel", userSchema);
 
-//Массив объектов
+var ivanPetrov = new UserModel({ name: "Ivan Petrov", age: 25, date: 12 - 07 - 2019 });
+
+ivanPetrov.save(function (err) {
+  if (err) return console.error(err);
+  console.log('Пользователь сохранен');
+});
+
 var arrayUsers = [
-  {name: "Светлана", age: 21, date: 19-05-2019},
-  {name: "Kamila", age: 35, date: 28-07-2019},
-  {name: "Олег", age: 27, date: 01-03-2019}
+  { name: "Светлана", age: 21 },
+  { name: "Kamila", age: 35 },
+  { name: "Олег", age: 27 }
 ];
 
-var createManyUser = function(arrayUsers, done) {
-  User.create(arrayUsers, function (err, user) {
-    if (err) return console.log(err);
-    done(null, user);
-  });
-};
+UserModel.create(arrayUsers, function (err, user) {
+  if (err) return console.log(err);
+  console.log('Пользователи созданы');
+});
 
 //
 var findUserByName = function(userName, done) {
@@ -275,7 +276,6 @@ var findUserByName = function(userName, done) {
   });
 };
 ```
-
 
 
 
