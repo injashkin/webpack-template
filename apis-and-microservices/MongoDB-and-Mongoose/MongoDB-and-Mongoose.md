@@ -215,6 +215,8 @@ MongoDB, как и MySQL, может содержать множество ба�
 
 Используемые ресурсы
 
+* https://code.tutsplus.com/ru/articles/an-introduction-to-mongoose-for-mongodb-and-nodejs--cms-29527
+
 * http://stepansuvorov.com/blog/2012/11/mongoose-%D0%B4%D0%BB%D1%8F-mongodb/
 
 * https://developer.mozilla.org/ru/docs/Learn/Server-side/Express_Nodejs/mongoose
