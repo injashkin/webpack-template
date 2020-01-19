@@ -131,6 +131,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 CRUD - это сокращение для операций Create, Read, Update and Delete (создать, прочесть, обновить и удалить). Эти операции являются основными для работы с базами данных, таких как MongoDB.
 
 В mongoose все завязано на 2х ключевых понятиях Схема(Schema) – описание сущности и Модель – сама сущность.
+
 Прежде всего вам нужна [схема]https://mongoosejs.com/docs/guide.html. 
 
 Создадайте схему и модель из неё.
@@ -187,21 +188,21 @@ const UserModel = mongoose.model("UserModel", userSchema);
 var ivanPetrov = new UserModel({ name: "Ivan Petrov", age: 25, favoriteFoods: ["чипсы", "кока-кола"] });
 
 //Сохранение документа в БД
-ivanPetrov.save(function (err) {
+ivanPetrov.save(function (err, data) {
   if (err) return console.error(err);
-  console.log('Пользователь сохранен');
+  console.log('Пользователь с именем ' + data.name + ' сохранен');
 });
 ```
-В вашей базе данных теперь имеется один документ с именем "Ivan Petrov". 
 
-Метод `save()` должен сохранить документ в базе данных mongodb. Если сохранение прошло успешно, будет выведено на консоль 'Пользователь сохранен', если же произошла ошибка, то будет выведено соответствующее сообщение об ошибке.
+Метод `save()` должен сохранить документ в базе данных mongodb. Если сохранение прошло успешно, будет выведено на консоль 'Пользователь с именем Ivan Petrov сохранен', если же произошла ошибка, то будет выведено соответствующее сообщение об ошибке.
+
+В вашей базе данных теперь должен быть один документ с именем "Ivan Petrov". 
 
 ## Создание нескольких записей с помощью model.create()
 
 Выше было показано, как сохранить документ в базе данных mongodb с помощью метода mongoose `save()`. Но что если нужно сохранить много документов, например, из массива. Для этого можно применить другой метод mongoose - `create()`.
 
 В файле `index.js` замените содержимое на следующий код.
-
 
 ```js
 require('dotenv').config();
@@ -229,16 +230,16 @@ var arrayUsers = [
 
 UserModel.create(arrayUsers, function (err, users) {
   if (err) return console.log(err);
-  console.log(users.length + ' пользователя созданы');
+  console.log('В базе данных созданы ' + users.length + ' документа');
 });
 
 ```
 
-Таким образом с помощью функции `create()` были добавлены еще три документа в БД.
+Таким образом с помощью функции `create()` из массива `arrayUsers` были добавлены еще три документа в БД, а на консоль выведена сообщение "В базе данных созданы 3 документа". Обратите внимание, в базе данных теперь четыре документа.
 
 Первый аргумент в методе `Model.create()` - это документы в виде массива или объекта, которые будут вставлены в БД. Второй аргумент - это функция обратного вызова.
 
-В функции обратного вызова в первый аргумент `err` передается ошибка, а во второй аргумент `users` передаются созданные документы.
+В функции обратного вызова в первый аргумент `err` передается ошибка, а во второй аргумент `users` передаётся массив `arrayUsers`.
 
 ## Использование model.find() для поиска в базе данных
 
@@ -260,29 +261,12 @@ var userSchema = new mongoose.Schema({
 
 const UserModel = mongoose.model("UserModel", userSchema);
 
-var ivanPetrov = new UserModel({ name: "Ivan Petrov", age: 25, date: 12 - 07 - 2019 });
-
-ivanPetrov.save(function (err) {
-  if (err) return console.error(err);
-  console.log('Пользователь сохранен');
-});
-
-var arrayUsers = [
-  { name: "Светлана", age: 21 },
-  { name: "Kamila", age: 35 },
-  { name: "Олег", age: 27 }
-];
-
-UserModel.create(arrayUsers, function (err, user) {
-  if (err) return console.log(err);
-  console.log('Пользователи созданы');
-});
+var userName = "Светлана";
 
 //Поиск в БД
-UserModel.find({name: "Светлана"}, function (err, userFound) {
+UserModel.find({ name: userName }, function (err, data) {
   if (err) return console.log(err);
-  console.log('В базе данных найдено следующее: ');
-  console.log(userFound);
+  console.log('Все пользователи с именем ' + userName + ' найдены. Их всего ' + data.length);
 });
 ```
 
@@ -295,11 +279,68 @@ UserModel.find({name: "Светлана"}, function (err, userFound) {
 
 ## Использование model.findOne() для возвращения одного документа из базы данных
 
-`findOne()` ведет себя как `.find()`, но возвращает только один документ (не массив), даже если элементов несколько. Это особенно полезно при поиске по свойствам, которые вы объявили уникальными.
+В mongoose есть метод `findOne()`, который ведет себя как метод `find()`, но возвращает только один документ (не массив). Даже если документов с данным параметром поиска несколько метод `findOne()` возвращает первый найденный документ. Это особенно полезно при поиске по свойствам, которые вы объявили уникальными.
 
-## Использование model.findById() для поиска в базе данных по _id
+В файл `index.js` скопируйте следующий код.
 
-Когда в базу данных сохраняется документ, mongodb автоматически добавляет поле _id и присваивает ему уникальный буквенно-цифровой ключ. Поиск по _id является очень частой операцией, поэтому mongoose предоставляет специальный метод для этого.
+```js
+require('dotenv').config();
+const mongoose = require('mongoose');
+
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true }, function (err) {
+  if (err) throw err;
+  console.log('БД подключена');
+});
+
+var userSchema = new mongoose.Schema({  
+  name: { type: String, default: "Анонимный" },
+  age: { type: Number, min: 18, index: true },
+  favoriteFoods: [String]
+});
+
+const UserModel = mongoose.model("UserModel", userSchema);
+
+UserModel.findOne({ name: "Светлана" }, function (err, data) {
+  if (err) return console.log(err);
+  console.log('Пользователь ' + data.name + ' найден');
+});
+```
+
+Метод `findOne()` находит в базе данных первый попавшийся документ со свойством `{ name: "Светлана" }` и возвращает его. Если в качестве первого параметра в функции `findOne()` ничего не указано, mongoose вернет произвольный документ.
+
+## Использование model.findById() для поиска в базе данных по id
+
+Когда в базу данных сохраняется документ, mongodb автоматически добавляет поле `_id` и присваивает ему уникальный буквенно-цифровой ключ. Поиск по `_id` является очень частой операцией, поэтому mongoose предоставляет специальный метод для этого - `findById()`.
+
+В файл `index.js` скопируйте следующий код.
+
+```js
+require('dotenv').config();
+const mongoose = require('mongoose');
+
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true }, function (err) {
+  if (err) throw err;
+  console.log('БД подключена');
+});
+
+var userSchema = new mongoose.Schema({  
+  name: { type: String, default: "Анонимный" },
+  age: { type: Number, min: 18, index: true },
+  favoriteFoods: [String]
+});
+
+const UserModel = mongoose.model("UserModel", userSchema);
+
+//Определенине id для поиска
+var userId = "5e24c27a0d07d02119c39ed7";
+
+//Поиск документа по _id
+UserModel.findById(userId, function (err, data) {
+  if (err) return console.log(err);
+  console.log('Пользователь c id = ' + data._id + ' найден, его зовут ' + data.name + ', ему ' + data.age + ' лет');
+});
+```
+Если документ с указанным id найден, то на консоль будет выведено сообщение "Пользователь c id = 5e24c27a0d07d02119c39ed7 найден, его зовут Олег, ему 27 лет".
 
 ## Выполните классические обновления, запустив Find, Edit затем Save
 
