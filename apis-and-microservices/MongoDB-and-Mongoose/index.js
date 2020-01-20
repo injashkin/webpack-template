@@ -6,21 +6,33 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
   console.log('БД подключена');
 });
 
-var userSchema = new mongoose.Schema({  
+var userSchema = new mongoose.Schema({
   name: { type: String, default: "Анонимный" },
   age: { type: Number, min: 18, index: true },
   favoriteFoods: [String]
 });
 
 const UserModel = mongoose.model("UserModel", userSchema);
-
+/*
 //Создание объекта модели, т. е. документа
 var ivanPetrov = new UserModel({ name: "Ivan Petrov", age: 25, favoriteFoods: ["чипсы", "кока-кола"] });
-
+*/
+/*
 //Сохранение документа в БД
 ivanPetrov.save(function (err, data) {
   if (err) return console.error(err);
   console.log('Пользователь с именем ' + data.name + ' сохранен');
+});
+*/
+
+UserModel.findById("5e25a8e88170fb0f8ce90f6f", function (err, user) {
+  if (err) return console.error(err);
+  user.name = 'Светлана Иванова';
+  user.favoriteFoods.push("гамбургер")
+  user.save(function (err) {
+    if (err) throw err;
+    console.log('Информация о пользователе ' + user.name + ' обновлена');
+  });
 });
 
 /*
@@ -35,8 +47,8 @@ UserModel.create(arrayUsers, function (err, users) {
   if (err) return console.log(err);
   console.log('В базе данных созданы ' + users.length + ' документа');
 });
-
-
+*/
+/*
 var userName = "Светлана";
 
 UserModel.find({ name: userName }, function (err, data) {
