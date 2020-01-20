@@ -418,6 +418,40 @@ UserModel.findOneAndUpdate(
 
 Функция `findOneAndUpdate()` находит пользователя по условию, указанному в первом параметре `{ name: 'Олег' }`, затем устанавливает свойства, указанные во втором параметре `{ name: 'Олег Сидоров', age: 28 }`. Третий параметр `{ new: true }` в функции `findOneAndUpdate()` указывает на то, чтобы функция возвращала измененный документ, а не оригинал. Т. е. при при `new` установленном в `true` на консоле будет выведено `'Информация о пользователе Олег Сидоров обновлена'`, а при `new` установленном в `false` на консоле будет выведено `'Информация о пользователе Олег обновлена'`. По умолчанию `new` установлено в `false`. Четвертый параметр в функции `findOneAndUpdate()` - это функция обратного вызова.
 
+## Удаление одного документа с помощью model.findByIdAndRemove
+
+Удалите одного человека по его _id. Вы должны использовать один из методов findByIdAndRemove() или findOneAndRemove(). Они похожи на предыдущие методы обновления. Они передают удаленный документ в БД. Как обычно, используйте аргумент функции personId в качестве ключа поиска.
+
+```js
+require('dotenv').config();
+const mongoose = require('mongoose');
+
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true }, function (err) {
+  if (err) throw err;
+  console.log('БД подключена');
+});
+
+var userSchema = new mongoose.Schema({
+  name: { type: String, default: "Анонимный" },
+  age: { type: Number, min: 18, index: true },
+  favoriteFoods: [String]
+});
+
+const UserModel = mongoose.model("UserModel", userSchema);
+
+UserModel.findByIdAndRemove("5e25a8e88170fb0f8ce90f71", function (err, user) {
+  if (err) return console.error(err);
+  console.log('Пользователь ' + user.name + ' удален из БД');
+});
+```
+
+## Удаление нескольких документов с помощью model.remove()
+
+Функция `Model.remove()` полезна для удаления всех документов, соответствующих заданным критериям.
+
+Удалите всех людей, которых зовут "Мэри", используя `Model.remove()`. Передайте его в документ запроса с установленным полем `name` и, конечно же, обратным вызовом.
+
+Примечание: `Model.remove()` возвращает не удаленный документ, а объект JSON, содержащий результат операции и количество затронутых элементов. Не забудьте передать его в обратный вызов `done()`, так как мы используем его в тестах.
 
 
 
