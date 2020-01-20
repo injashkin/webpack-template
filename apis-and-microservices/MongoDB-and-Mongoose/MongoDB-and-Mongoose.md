@@ -342,7 +342,37 @@ UserModel.findById(userId, function (err, data) {
 ```
 Если документ с указанным id найден, то на консоль будет выведено сообщение "Пользователь c id = 5e24c27a0d07d02119c39ed7 найден, его зовут Олег, ему 27 лет".
 
-## Выполните классические обновления, запустив Find, Edit затем Save
+## Обновление документов в БД с помощью стандартного поиска, редактирования и сохранения
+
+Для того, чтобы изменить (обновить) документ в базе данных, в mongoose существуют методы `update`, `findByIdAndUpdate` и `findOneAndUpdate`. Но сначала нелишнем будет узнать о классическом способе изменения документов. Этот способ состоит из уже изученных вами методов, а именно: `findById` и `save`.
+```js
+require('dotenv').config();
+const mongoose = require('mongoose');
+
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true }, function (err) {
+  if (err) throw err;
+  console.log('БД подключена');
+});
+
+var userSchema = new mongoose.Schema({
+  name: { type: String, default: "Анонимный" },
+  age: { type: Number, min: 18, index: true },
+  favoriteFoods: [String]
+});
+
+const UserModel = mongoose.model("UserModel", userSchema);
+
+//Обновление документа 
+UserModel.findById("5e25a8e88170fb0f8ce90f6f", function (err, user) {
+  if (err) return console.error(err);
+  user.name = 'Светлана Иванова';
+  user.favoriteFoods.push("гамбургер")
+  user.save(function (err) {
+    if (err) throw err;
+    console.log('Информация о пользователе ' + user.name + ' обновлена');
+  });
+});
+```
 
 В старые добрые времена это было то, что вам нужно было сделать, если вы хотели отредактировать документ и иметь возможность каким-то образом использовать его, например, отправить его обратно в ответе сервера. Mongoose имеет специальный метод обновления: `Model.update()`. Он привязан к низкоуровневому драйверу mongo. Он может массово редактировать множество документов, соответствующих определенным критериям, но не отправляет обратно обновленный документ, а только сообщение о состоянии. Кроме того, это затрудняет проверку модели, потому что она просто напрямую вызывает драйвер mongo.
 
