@@ -526,17 +526,16 @@ UserModel.find({ favoriteFoods: 'чипсы' })
 
 Более подробно о помощниках запросов смотри [здесь](https://mongoosejs.com/docs/api/query.html)
 
-Найденые ресурсы
+**Используемые ресурсы:**
 
-* http://www.coldfox.ru/article/5be022d49227d914a1c83fe3/%D0%9F%D0%BE%D0%B4%D1%80%D0%BE%D0%B1%D0%BD%D0%BE%D0%B5-%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE-%D0%BF%D0%BE-MongoDB-Mongoose
-
-* https://metanit.com/nosql/mongodb/
-
-
-Используемые ресурсы
+* https://mongoosejs.com/
 
 * https://code.tutsplus.com/ru/articles/an-introduction-to-mongoose-for-mongodb-and-nodejs--cms-29527
 
 * http://stepansuvorov.com/blog/2012/11/mongoose-%D0%B4%D0%BB%D1%8F-mongodb/
 
 * https://developer.mozilla.org/ru/docs/Learn/Server-side/Express_Nodejs/mongoose
+
+* https://metanit.com/nosql/mongodb/
+
+* http://www.coldfox.ru/article/5be022d49227d914a1c83fe3/%D0%9F%D0%BE%D0%B4%D1%80%D0%BE%D0%B1%D0%BD%D0%BE%D0%B5-%D1%80%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE-%D0%BF%D0%BE-MongoDB-Mongoose
