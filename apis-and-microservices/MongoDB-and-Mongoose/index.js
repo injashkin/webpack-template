@@ -21,7 +21,7 @@ app.get("/api/timestamp/:date", (req, res) => {
 //Если строка даты пуста, то выводится текущее время
 app.get("/api/timestamp/", (req, res) => {
   const timeInMs = Date.now();
-  const timeUTC = new Date(timeInMs).toUTCString();
+  const timeUTC = new Date().toUTCString();
   res.json({
     unix: timeInMs, utc: timeUTC
   });
