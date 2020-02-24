@@ -68,7 +68,7 @@ gatsby new hello-world https://github.com/gatsbyjs/gatsby-starter-hello-world
 
 <a name="part1"></a>
 
-## Знакомство со строительными блоками Gatsby 
+## 1. Знакомство со строительными блоками Gatsby 
 
 В предыдущем разделе вы подготовили локальную среду разработки, установив необходимое программное обеспечение и создав свой первый сайт Gatsby с помощью [стартера “hello world”](https://github.com/gatsbyjs/gatsby-starter-hello-world). Теперь погрузитесь глубже в код, сгенерированный этим стартером.
 
@@ -753,27 +753,27 @@ seem to really enjoy bananas!
 
 ## Программное создание страниц из данных
 
-В предыдущем руководстве вы создали красивую индексную страницу, которая запрашивает файлы markdown и создает список заголовков и выдержек из записей блога. Но вы не хотите просто видеть выдержки, вам нужны реальные страницы для ваших файлов markdown.
+В предыдущем руководстве вы создали красивую index страницу, которая запрашивает файлы markdown и создает список заголовков и выдержек из записей блога. Но вам нужны не  просто выдержки, а реальные страницы для ваших файлов markdown.
 
 Вы можете продолжать создавать страницы, помещая компоненты React в `src/pages`. Однако теперь вы узнаете, как программно создавать страницы из данных. Gatsby не ограничивается созданием страниц из файлов, как многие статические генераторы сайтов. Gatsby позволяет использовать GraphQL для запроса данных и отображения результатов запроса на страницах — все во время сборки.
 
-Создание slugs для страниц
+### Создание слагов для страниц
 
-Создание новых страниц состоит из двух этапов:
+Чтобы создать новую страницу нужно выполнить два шага:
 
-1. Создайте "путь” или “slug” для страницы.
+1. Создать "путь” или “слаг” для страницы.
 
 2. Создать страницу.
 
-Примечание: часто источники данных напрямую предоставляют slug или пути для содержимого - при работе с одной из этих систем (например, CMS), вам не нужно создавать slugs самостоятельно, как вы делаете с файлами markdown.
+слаг (slug) - понятный человеку фрагмент текста из URL в отличии от, например, ID, который может быть непонятным набором символом.
+
+Примечание: часто источники данных напрямую предоставляют слаг или путь для содержимого - при работе с одной из этих систем (например, CMS), вам не нужно создавать слаги самостоятельно, как вы делаете с файлами markdown.
 
 Для создания страниц markdown вы научитесь использовать два API-интерфейса Gatsby: `onCreateNode` и `createPages`. Это две рабочие лошадки API, которые вы увидите на многих сайтах и плагинах.
 
 Мы делаем все возможное, чтобы сделать API Gatsby простыми в реализации. Для реализации API необходимо экспортировать функцию с именем API из `gatsby-node.js`.
 
-Итак, вот где вы это сделаете. В корне вашего сайта создайте файл с именем `gatsby-node.js`. Затем добавьте следующее.
-
-gatsby-node.js
+В корне вашего сайта создайте файл с именем `gatsby-node.js`. Затем в него добавьте следующее.
 
 ```js
 exports.onCreateNode = ({ node }) => {
@@ -785,7 +785,7 @@ exports.onCreateNode = ({ node }) => {
 
 Остановите и перезапустите сервер разработки. Как только вы это сделаете, вы увидите, что довольно много вновь созданных узлов войдут в консоль терминала.
 
-В следующем разделе вы будете использовать этот API, чтобы добавить slugs для ваших страниц Markdown на `MarkdownRemark` узлов.
+В следующем разделе вы будете использовать этот API, чтобы добавлять слаги для ваших Markdown страниц `MarkdownRemark` узлов.
 
 gatsby-node.js
 
@@ -796,3 +796,486 @@ exports.onCreateNode = ({ node }) => {
   }
 }
 ```
+
+Вы хотите использовать каждое имя файла markdown для создания слага страницы. Так `pandas-and-bananas.md` станет `/pandas-and-bananas/`. Но как получить имя файла из узла `MarkdownRemark`? Чтобы получить его, вам нужно пересечь “узловой граф " к его родительскому узлу `File`, так как узлы `File` содержат необходимые вам данные о файлах на диске. Для этого снова измените свою функцию:
+
+gatsby-node.js
+
+```js
+exports.onCreateNode = ({ node, getNode }) => {
+  if (node.internal.type === `MarkdownRemark`) {
+    const fileNode = getNode(node.parent)
+    console.log(`\n`, fileNode.relativePath)
+  }
+}
+```
+
+После перезагрузки сервера разработки вы должны увидеть относительные пути для двух файлов markdown, напечатанных на экране терминала.
+
+```
+ pages/sweet-pandas-eating-sweets.md
+
+ pages/pandas-and-bananas.md
+```
+
+Теперь вам придется создавать слаги. Поскольку логика создания слагов из имен файлов может быть сложной, плагин `gatsby-source-filesystem` поставляется с функцией для создания слагов. Давайте воспользуемся этим.
+
+gatsby-node.js
+
+```js
+const { createFilePath } = require(`gatsby-source-filesystem`)
+
+exports.onCreateNode = ({ node, getNode }) => {
+  if (node.internal.type === `MarkdownRemark`) {
+    console.log(createFilePath({ node, getNode, basePath: `pages` }))
+  }
+}
+```
+
+Функция обрабатывает поиск родительского узла `File` вместе с созданием слага. Запустите сервер разработки еще раз, и вы увидите, что в терминал вошли два слага, по одному для каждого файла markdown.
+
+Теперь вы можете добавлять новые слаги непосредственно на узлы `MarkdownRemark`. Это очень важно, так как любые данные, которые вы добавляете в узлы, доступны для последующего запроса с помощью GraphQL. Так что, когда придет время создавать страницы, будет легко получить слаг.
+
+Для этого вы будете использовать функцию, переданную в вашу реализацию API под названием `createNodeField`. Эта функция позволяет создавать дополнительные поля в узлах, созданных другими плагинами. Только первоначальный создатель узла может непосредственно модифицировать узел - все остальные плагины (включая ваш `gatsby-node.js`) должны использовать эту функцию для создания дополнительных полей.
+
+gatsby-node.js
+
+```js
+const { createFilePath } = require(`gatsby-source-filesystem`)
+exports.onCreateNode = ({ node, getNode, actions }) => {
+  const { createNodeField } = actions
+  if (node.internal.type === `MarkdownRemark`) {
+    const slug = createFilePath({ node, getNode, basePath: `pages` })
+    createNodeField({
+      node,
+      name: `slug`,
+      value: slug,
+    })
+  }
+}
+```
+
+Перезагрузите сервер разработки и откройте или обновите GraphiQL. Затем запустите этот запрос GraphQL, чтобы увидеть ваши новые слаги.
+
+```graphql
+{
+  allMarkdownRemark {
+    edges {
+      node {
+        fields {
+          slug
+        }
+      }
+    }
+  }
+}
+```
+
+Теперь, когда слаги созданы, вы можете создавать страницы.
+
+### Создание страниц
+
+В том же файле `gatsby-node.js`, добавьте следующее.
+
+```js
+const { createFilePath } = require(`gatsby-source-filesystem`)
+
+exports.onCreateNode = ({ node, getNode, actions }) => {
+  const { createNodeField } = actions
+  if (node.internal.type === `MarkdownRemark`) {
+    const slug = createFilePath({ node, getNode, basePath: `pages` })
+    createNodeField({
+      node,
+      name: `slug`,
+      value: slug,
+    })
+  }
+}
+
+exports.createPages = async ({ graphql, actions }) => {
+  // **Note:** The graphql function call returns a Promise
+  // see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise for more info
+  const result = await graphql(`
+    query {
+      allMarkdownRemark {
+        edges {
+          node {
+            fields {
+              slug
+            }
+          }
+        }
+      }
+    }
+  `)
+  console.log(JSON.stringify(result, null, 4))
+}
+```
+
+Вы добавили реализацию API `createPages`, который вызывает Gatsby, чтобы плагины могли добавлять страницы.
+
+Как уже упоминалось во введении к этой части руководства, шагами по программному созданию страниц являются:
+
+1. Запрос данных с помощью GraphQL
+
+2. Отображение результатов запроса на страницах
+
+Приведенный выше код является первым шагом для создания страниц из вашего markdown, поскольку вы используете предоставленную функцию `graphql` для запроса созданных вами слагов markdown. Затем вы выводите результат запроса, который должен выглядеть подобным образом:
+
+![query-markdown-slugs](images/query-markdown-slugs.png)
+
+Для создания страниц вам понадобится еще одна вещь помимо слага: компонент шаблона страницы. Как и все в Gatsby, программные страницы питаются компонентами React. При создании страницы необходимо указать, какой компонент использовать.
+
+Создайте каталог в `src/templates`, а затем добавьте следующее в файл с именем `src/templates/blog-post.js`.
+
+```jsx
+import React from "react"
+import Layout from "../components/layout"
+
+export default () => {
+  return (
+    <Layout>
+      <div>Hello blog post</div>
+    </Layout>
+  )
+}
+```
+
+Затем измените gatsby-node.js
+
+```js
+const path = require(`path`)
+const { createFilePath } = require(`gatsby-source-filesystem`)
+
+exports.onCreateNode = ({ node, getNode, actions }) => {
+  const { createNodeField } = actions
+  if (node.internal.type === `MarkdownRemark`) {
+    const slug = createFilePath({ node, getNode, basePath: `pages` })
+    createNodeField({
+      node,
+      name: `slug`,
+      value: slug,
+    })
+  }
+}
+
+exports.createPages = async ({ graphql, actions }) => {
+  const { createPage } = actions
+  const result = await graphql(`
+    query {
+      allMarkdownRemark {
+        edges {
+          node {
+            fields {
+              slug
+            }
+          }
+        }
+      }
+    }
+  `)
+
+  result.data.allMarkdownRemark.edges.forEach(({ node }) => {
+    createPage({
+      path: node.fields.slug,
+      component: path.resolve(`./src/templates/blog-post.js`),
+      context: {
+        // Data passed to context is available
+        // in page queries as GraphQL variables.
+        slug: node.fields.slug,
+      },
+    })
+  })
+}
+```
+
+Перезагрузите сервер разработки, и ваши страницы будут созданы! Простой способ найти новые страницы, которые вы создаете во время разработки, - это перейти на случайный путь, где Gatsby с удовольствием покажет вам список страниц на сайте. Если вы идете в http://localhost:8000/sdf, вы увидите новые страницы, которые вы создали.
+
+Это немного скучно и не то, что вы хотите. Теперь вы можете получить данные из вашего поста markdown. Измените `src/templates/blog-post.js` следующим образом:
+
+```jsx
+import React from "react"
+import { graphql } from "gatsby"
+import Layout from "../components/layout"
+
+export default ({ data }) => {
+  const post = data.markdownRemark
+  return (
+    <Layout>
+      <div>
+        <h1>{post.frontmatter.title}</h1>
+        <div dangerouslySetInnerHTML={{ __html: post.html }} />
+      </div>
+    </Layout>
+  )
+}
+
+export const query = graphql`
+  query($slug: String!) {
+    markdownRemark(fields: { slug: { eq: $slug } }) {
+      html
+      frontmatter {
+        title
+      }
+    }
+  }
+`
+```
+
+Последний шаг - это ссылка на ваши новые страницы с индексной страницы.
+
+Вернитесь к `src/pages/index.js`, запросите ваши слаги markdown и создайте ссылки.
+
+```jsx
+import React from "react"
+import { css } from "@emotion/core"
+import { Link, graphql } from "gatsby"
+import { rhythm } from "../utils/typography"
+import Layout from "../components/layout"
+
+export default ({ data }) => {
+  return (
+    <Layout>
+      <div>
+        <h1
+          css={css`
+            display: inline-block;
+            border-bottom: 1px solid;
+          `}
+        >
+          Amazing Pandas Eating Things
+        </h1>
+        <h4>{data.allMarkdownRemark.totalCount} Posts</h4>
+        {data.allMarkdownRemark.edges.map(({ node }) => (
+          <div key={node.id}>
+            <Link
+              to={node.fields.slug}
+              css={css`
+                text-decoration: none;
+                color: inherit;
+              `}
+            >
+              <h3
+                css={css`
+                  margin-bottom: ${rhythm(1 / 4)};
+                `}
+              >
+                {node.frontmatter.title}{" "}
+                <span
+                  css={css`
+                    color: #555;
+                  `}
+                >
+                  — {node.frontmatter.date}
+                </span>
+              </h3>
+              <p>{node.excerpt}</p>
+            </Link>
+          </div>
+        ))}
+      </div>
+    </Layout>
+  )
+}
+
+export const query = graphql`
+  query {
+    allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }) {
+      totalCount
+      edges {
+        node {
+          id
+          frontmatter {
+            title
+            date(formatString: "DD MMMM, YYYY")
+          }
+          fields {
+            slug
+          }
+          excerpt
+        }
+      }
+    }
+  }
+`
+```
+
+В этой части урока вы изучили основы построения с помощью слоя данных Gatsby. Вы узнали, как создавать и преобразовывать данные с помощью плагинов, как использовать GraphQL для отображения данных на страницы, а затем как создавать компоненты шаблонов страниц, в которых запрашиваются данные для каждой страницы.
+
+
+* Вы можете взглянуть на некоторые [примеры сайтов](https://github.com/gatsbyjs/gatsby/tree/master/examples#gatsby-example-websites)
+
+* Узнать больше [о плагинах](https://www.gatsbyjs.org/docs/plugins/)
+
+* Посмотрите, что [другие люди строят создают с помощью Гэтсби](https://www.gatsbyjs.org/showcase/)
+
+* Ознакомьтесь с документацией по [Gatsby’s APIs](https://www.gatsbyjs.org/docs/api-specification/), [nodes](https://www.gatsbyjs.org/docs/node-interface/), или [GraphQL](https://www.gatsbyjs.org/docs/graphql-reference/)
+
+
+
+
+
+## Подготовка сайта к публикации
+
+Ты уже научился следующему:
+
+* создание новых сайтов Gatsby
+
+* создание страниц и компонентов
+
+* компоненты стиля
+
+* добавление плагинов на сайт
+
+* данные source и transform
+
+* использование GraphQL для запроса данных для страниц
+
+* программное создание страниц из ваших данных
+
+В этом заключительном разделе вы пройдете через некоторые общие шаги по подготовке сайта к работе, представив мощный инструмент диагностики сайта под названием [Lighthouse](https://developers.google.com/web/tools/lighthouse/). Попутно мы представим еще несколько плагинов, которые вы часто будете использовать на своих сайтах Gatsby.
+
+### Аудит с помощью  Lighthouse
+
+Цитата с [сайта Lighthouse](https://developers.google.com/web/tools/lighthouse/):
+
+> Lighthouse - это автоматизированный инструмент с открытым исходным кодом для улучшения качества веб-страниц. Вы можете запустить его на любой веб-странице, общедоступной или требующей аутентификации. Он имеет аудиты производительности, доступности, прогрессивных веб-приложений (PWA), и многое другое.
+
+Lighthouse включен в инструменты разработчика Chrome. Проведение аудита, а затем устранение обнаруженных ошибок и внедрение предложенных улучшений — отличный способ подготовить ваш сайт к работе. Это дает вам уверенность в том, что ваш сайт будет максимально быстрым и доступным.
+
+Попробуйте это!
+
+Во-первых, вам нужно создать продакшен сборку вашего сайта Gatsby. Сервер разработки Gatsby оптимизирован для ускорения разработки; но сайт, который он создает, хотя и очень похож на рабочую версию сайта, не так оптимизирован.
+
+### Создание продакшен сборки
+
+1. Остановите сервер разработки (если он все еще работает) и выполните следующую команду:
+
+```shell
+gatsby build
+```
+
+Как вы узнали в [части 1](#part1), эта команда делает продакшен сборку вашего сайта и выводит встроенные статические файлы в каталог `public`.
+
+2. Просмотрите продакшен сайт локально. Выполните:
+
+```shell
+gatsby serve
+```
+
+После ввода этой команды, вы можете просмотреть свой сайт по адресу http://localhost:9000.
+
+### Выполнение аудита с помощью Lighthouse
+
+Теперь вы проведете свой первый тест на Lighthouse.
+
+1. Если вы еще не сделали этого, откройте сайт в Chrome Incognito Mode, чтобы никакие расширения не мешали тесту. Затем, откройте Chrome DevTools.
+
+2. Нажмите на вкладку "Audits", где вы увидите экран, который выглядит следующим образом:
+
+![lighthouse audit](images/lighthouse-audit.png)
+
+3. Нажмите кнопку "Generate report" (по умолчанию должны быть выбраны все доступные типы аудита). Затем потребуется минута или около того, чтобы выполнить аудит. После завершения аудита вы должны увидеть результаты, которые выглядят следующим образом:
+
+Как вы можете видеть, производительность Gatsby превосходна из коробки, но вам не хватает некоторых вещей для PWA, Accessibility, Best Practices и SEO, которые улучшат ваши результаты (и в процессе сделают ваш сайт намного более дружелюбным для посетителей и поисковых систем).
+
+### Добавление файла манифеста
+
+Похоже, у вас довольно тусклая оценка в категории “Progressive Web App”. Давайте разберемся с этим.
+
+Но во-первых, что такое PWA?
+
+Это обычные веб-сайты, которые используют преимущества современных функций браузера, чтобы улучшить работу веб с помощью особенностей и эффектов, подобных приложениям. Ознакомьтесь с [обзором в Google](https://developers.google.com/web/progressive-web-apps/) о том, что определяет PWA.
+
+Включение манифеста веб-приложения является одним из трех общепринятых [базовых требований для PWA](https://alistapart.com/article/yes-that-web-project-should-be-a-pwa#section1).
+
+Цитирование [Google](https://developers.google.com/web/fundamentals/web-app-manifest/):
+
+> Манифест веб-приложения - это простой JSON-файл, который сообщает браузеру о вашем веб-приложении и о том, как оно должно вести себя при "установке" на мобильном устройстве или рабочем столе пользователя.
+
+[Плагин манифеста Gatsby](https://www.gatsbyjs.org/packages/gatsby-plugin-manifest/) настраивает Gatsby для создания файла `manifest.webmanifest` для каждой сборки сайта.
+
+### Использование gatsby-plugin-manifest
+
+1. Установите плагин:
+
+```shell
+npm install --save gatsby-plugin-manifest
+```
+
+2. Добавьте favicon для вашего приложения в разделе `src/images/icon.png`. Для целей этого урока вы можете использовать [этот значок](https://raw.githubusercontent.com/gatsbyjs/gatsby/master/docs/tutorial/part-eight/icon.png), если у вас его нет. Икона необходима для построения всех образов для манифеста. Для получения дополнительной информации обратитесь к документации по `gatsby-plugin-manifest`.
+
+3. Добавьте плагин к массиву `plugins` в вашем файле `gatsby-config.js`.
+
+```js
+{
+  plugins: [
+    {
+      resolve: `gatsby-plugin-manifest`,
+      options: {
+        name: `GatsbyJS`,
+        short_name: `GatsbyJS`,
+        start_url: `/`,
+        background_color: `#6b37bf`,
+        theme_color: `#6b37bf`,
+        // Enables "Add to Homescreen" prompt and disables browser UI (including back button)
+        // see https://developers.google.com/web/fundamentals/web-app-manifest/#display
+        display: `standalone`,
+        icon: `src/images/icon.png`, // This path is relative to the root of the site.
+      },
+    },
+  ]
+}
+```
+
+Это все, что вам нужно, чтобы начать работу с добавлением веб-манифеста на сайт Gatsby. Приведенный пример отражает базовую конфигурацию - Проверьте [ссылку на плагин](https://www.gatsbyjs.org/packages/gatsby-plugin-manifest/?=gatsby-plugin-manifest#automatic-mode) для получения дополнительных опций.
+
+### Добавление офлайн поддержки
+
+Еще одно требование к веб-сайту, чтобы квалифицироваться как PWA, - это использование [Service Worker](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API). Service Worker работает в фоновом режиме, решая обслуживать сетевое или кэшированное содержимое на основе подключения, что обеспечивает бесперебойную управляемую автономную работу.
+
+[Офлайн плагин Gatsby](https://www.gatsbyjs.org/packages/gatsby-plugin-offline/) делает сайт Gatsby автономным и более устойчивым к плохим сетевым условиям, создавая Service Worker для вашего сайта.
+
+### Использование gatsby-plugin-offline
+
+1. Установите плагин:
+
+```shell
+npm install --save gatsby-plugin-offline
+```
+
+Добавьте плагин к массиву `plugins` в вашем файле `gatsby-config.js`.
+
+```js
+{
+  plugins: [
+    {
+      resolve: `gatsby-plugin-manifest`,
+      options: {
+        name: `GatsbyJS`,
+        short_name: `GatsbyJS`,
+        start_url: `/`,
+        background_color: `#6b37bf`,
+        theme_color: `#6b37bf`,
+        // Enables "Add to Homescreen" prompt and disables browser UI (including back button)
+        // see https://developers.google.com/web/fundamentals/web-app-manifest/#display
+        display: `standalone`,
+        icon: `src/images/icon.png`, // This path is relative to the root of the site.
+      },
+    },
+    `gatsby-plugin-offline`,
+  ]
+}
+```
+
+Это все, что вам нужно, чтобы начать работу с Service Worker с помощью Gatsby.
+
+Офлайн плагин должен быть указан после плагина манифеста, чтобы офлайн плагин мог кэшировать созданный `manifest.webmanifest`.
+
+### Добавление метаданных страницы
+
+Добавление метаданных на страницы (таких как заголовок или описание) является ключевым фактором, помогающим поисковым системам, таким как Google, понять ваш контент и решить, когда его следует отображать в результатах поиска.
+
+[React Helmet](https://github.com/nfl/react-helmet) - это пакет, который содержит интерфейс React компонента, чтобы управлять [заголовком документа](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/head).
+
+Gatsby обеспечивает поддержку [плагина react helmet](https://www.gatsbyjs.org/packages/gatsby-plugin-react-helmet/) для отображения данных сервера, добавленных с помощью React Helmet. С помощью плагина атрибуты, которые вы добавляете в React Helmet, будут добавлены к статическим HTML-страницам, которые создает Гэтсби.
