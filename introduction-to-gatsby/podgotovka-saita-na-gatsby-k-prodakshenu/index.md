@@ -239,7 +239,7 @@ class Application extends React.Component {
 [Дополнительные руководства] (/tutorial/ additional-tutorials/)
 
 - Ты построил что-нибудь классное? Поделитесь им в Twitter, тег [#buildwithgatsby](https://twitter.com/search?q=%23buildwithgatsby), и [@упомянуть нас](https://twitter.com/gatsbyjs)!
-- Вы написали классный пост в блоге о том, что узнали? Поделитесь, что слишком!
+
 - Внести свой вклад! Прогуляйтесь по [открытым вопросам](https://github.com/gatsbyjs/gatsby/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) на репо Гэтсби и [стать вкладчиком] (/contributing/how-to-contribute/).
 
 Проверьте ["как внести свой вклад"] (/contributing/how-to-contribute/) документы для еще большего количества идей.
