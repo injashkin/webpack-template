@@ -2,7 +2,7 @@
 title: Подготовка Gatsby сайта к публикации
 ---
 
-Ты изучил следующее:
+Вы изучили следующее:
 
 - создание новых сайтов Gatsby
 - создание страниц и компонентов
@@ -107,23 +107,23 @@ npm install --save gatsby-plugin-manifest
 }
 ```
 
-That's all you need to get started with adding a web manifest to a Gatsby site. The example given reflects a base configuration -- Check out the [plugin reference](/packages/gatsby-plugin-manifest/?=gatsby-plugin-manifest#automatic-mode) for more options.
+Это все, что вам необходимо, чтобы начать работу с добавлением веб-манифеста на Gatsby сайт. Приведенный пример отражает лишь базовую конфигурацию.  Про дополнительные возможности читайте [справку о плагине](https://www.gatsbyjs.org/packages/gatsby-plugin-manifest/?=gatsby-plugin-manifest#automatic-mode).
 
-## Add offline support
+## Добавление офлайн поддержки
 
-Another requirement for a website to qualify as a PWA is the use of a [service worker](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API). A service worker runs in the background, deciding to serve network or cached content based on connectivity, allowing for a seamless, managed offline experience.
+Еще одно требование к веб-сайту, чтобы квалифицироваться как PWA, - это использование [Service Worker](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API). Service Worker работает в фоновом режиме и, в зависимости от подключения к сети, решает, обслуживать сетевое или кэшированное содержимое, что обеспечивает бесперебойную управляемую автономную работу.
 
-[Gatsby's offline plugin](/packages/gatsby-plugin-offline/) makes a Gatsby site work offline and more resistant to bad network conditions by creating a service worker for your site.
+[Gatsby плагин офлайн](https://www.gatsbyjs.org/packages/gatsby-plugin-offline/) делает Gatsby сайт автономным и более устойчивым к плохим сетевым условиям, создавая Service Worker для вашего сайта.
 
-### ✋ Using `gatsby-plugin-offline`
+### Использование gatsby-plugin-offline
 
-1.  Install the plugin:
+1. Установите плагин:
 
 ```shell
 npm install --save gatsby-plugin-offline
 ```
 
-2.  Add the plugin to the `plugins` array in your `gatsby-config.js` file.
+2. Добавьте плагин в массив `plugins` файла `gatsby-config.js`.
 
 ```javascript:title=gatsby-config.js
 {
@@ -148,27 +148,27 @@ npm install --save gatsby-plugin-offline
 }
 ```
 
-That's all you need to get started with service workers with Gatsby.
+Это все, что вам нужно, для работы с Service Worker с помощью Gatsby.
 
-> 💡 The offline plugin should be listed _after_ the manifest plugin so that the offline plugin can cache the created `manifest.webmanifest`.
+Офлайн плагин должен быть указан после плагина манифеста, чтобы офлайн плагин мог кэшировать созданный `manifest.webmanifest`.
 
-## Add page metadata
+## Добавление метаданных страницы
 
-Adding metadata to pages (such as a title or description) is key in helping search engines like Google understand your content and decide when to surface it in search results.
+Добавление метаданных на страницы (таких как заголовок или описание) является ключевым фактором, помогающим поисковым системам, таким как Google, понять ваш контент и решить, когда его следует отображать в результатах поиска.
 
-[React Helmet](https://github.com/nfl/react-helmet) is a package that provides a React component interface for you to manage your [document head](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/head).
+[React Helmet](https://github.com/nfl/react-helmet) - это пакет, который содержит интерфейс React компонента, чтобы управлять [заголовком документа](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/head).
 
-Gatsby's [react helmet plugin](/packages/gatsby-plugin-react-helmet/) provides drop-in support for server rendering data added with React Helmet. Using the plugin, attributes you add to React Helmet will be added to the static HTML pages that Gatsby builds.
+Gatsby обеспечивает поддержку [плагина react helmet](https://www.gatsbyjs.org/packages/gatsby-plugin-react-helmet/) для отображения данных сервера, добавленных с помощью React Helmet. С помощью плагина атрибуты, которые вы добавляете в React Helmet, будут добавлены к статическим HTML-страницам, которые создает Gatsby.
 
-### ✋ Using `React Helmet` and `gatsby-plugin-react-helmet`
+###  Использование `React Helmet` и `gatsby-plugin-react-helmet`
 
-1.  Install both packages:
+1. Установите оба пакета:
 
 ```shell
 npm install --save gatsby-plugin-react-helmet react-helmet
 ```
 
-2.  Add the plugin to the `plugins` array in your `gatsby-config.js` file.
+2. Добавьте плагин в массив 'plugins` файла `gatsby-config.js`
 
 ```javascript:title=gatsby-config.js
 {
@@ -194,7 +194,7 @@ npm install --save gatsby-plugin-react-helmet react-helmet
 }
 ```
 
-3.  Use `React Helmet` in your pages:
+3. Используйте `React Helmet` на стрранице:
 
 ```jsx
 import React from "react"
@@ -218,40 +218,32 @@ class Application extends React.Component {
 }
 ```
 
-> 💡 The above example is from the [React Helmet docs](https://github.com/nfl/react-helmet#example). Check those out for more!
+Приведенный выше пример взят из [React Helmet docs](https://github.com/nfl/react-helmet#example).
 
-## Keep making it better
+## Дальнейшие действия
 
-In this section, we've shown you a few Gatsby-specific tools to improve your site's performance and prepare to go live.
+### Официальная документация
 
-Lighthouse is a great tool for site improvements and learning -- Continue looking through the detailed feedback it provides and keep making your site better!
+- [Официальная документация](https://www.gatsbyjs.org/docs/): просмотрите нашу официальную документацию по _[Быстрый старт](https://www.gatsbyjs.org/docs/quick-start/)_, _[Подробные руководства](https://www.gatsbyjs.org/docs/preparing-your-environment/)_, _[ссылки на API](https://www.gatsbyjs.org/docs/gatsby-link/)_, и многое другое.
 
-## Next Steps
+### Официальные Плагины
 
-### Official Documentation
+- [Официальные Плагины](https://github.com/gatsbyjs/gatsby/tree/master/packages): Полный список всех официальных плагинов, поддерживаемых Gatsby.
 
-- [Official Documentation](https://www.gatsbyjs.org/docs/): View our Official Documentation for _[Quick Start](https://www.gatsbyjs.org/docs/quick-start/)_, _[Detailed Guides](https://www.gatsbyjs.org/docs/preparing-your-environment/)_, _[API References](https://www.gatsbyjs.org/docs/gatsby-link/)_, and much more.
+### Официальные Стартеры
 
-### Official Plugins
+1.  [Gatsby Стартер по умолчанию](https://github.com/gatsbyjs/gatsby-starter-default): Начните свой проект с этого стандартного шаблона. Этот скелетный стартер поставляется с основными конфигурационными файлами Gatsby, которые вам могут понадобиться. _[рабочий пример](https://gatsbyjs.github.io/gatsby-starter-default/)_
+2.  [Gatsby Стартер блога](https://github.com/gatsbyjs/gatsby-starter-blog): Gatsby стартер для создания классного и быстрого блога. _[рабочий пример](https://gatsbyjs.github.io/gatsby-starter-blog/)_
+3.  [Gatsby Стартер "Hello-World"](https://github.com/gatsbyjs/gatsby-starter-hello-world): Gatsby стартер с голыми предметами первой необходимости, необходимыми для сайта Gatsby. _[рабочий пример](https://gatsby-starter-hello-world-demo.netlify.com/)_
 
-- [Official Plugins](https://github.com/gatsbyjs/gatsby/tree/master/packages): The complete list of all the Official Plugins maintained by Gatsby.
+[Дополнительные руководства] (/tutorial/ additional-tutorials/)
 
-### Official Starters
+- Ты построил что-нибудь классное? Поделитесь им в Twitter, тег [#buildwithgatsby](https://twitter.com/search?q=%23buildwithgatsby), и [@упомянуть нас](https://twitter.com/gatsbyjs)!
+- Вы написали классный пост в блоге о том, что узнали? Поделитесь, что слишком!
+- Внести свой вклад! Прогуляйтесь по [открытым вопросам](https://github.com/gatsbyjs/gatsby/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) на репо Гэтсби и [стать вкладчиком] (/contributing/how-to-contribute/).
 
-1.  [Gatsby's Default Starter](https://github.com/gatsbyjs/gatsby-starter-default): Kick off your project with this default boilerplate. This barebones starter ships with the main Gatsby configuration files you might need. _[working example](https://gatsbyjs.github.io/gatsby-starter-default/)_
-2.  [Gatsby's Blog Starter](https://github.com/gatsbyjs/gatsby-starter-blog): Gatsby starter for creating an awesome and blazing-fast blog. _[working example](https://gatsbyjs.github.io/gatsby-starter-blog/)_
-3.  [Gatsby's Hello-World Starter](https://github.com/gatsbyjs/gatsby-starter-hello-world): Gatsby Starter with the bare essentials needed for a Gatsby site. _[working example](https://gatsby-starter-hello-world-demo.netlify.com/)_
+Проверьте ["как внести свой вклад"] (/contributing/how-to-contribute/) документы для еще большего количества идей.
 
-## That's all, folks
+Для написания данной статьи использованы следующие материалы:
 
-Well, not quite; just for this tutorial. There are [Additional Tutorials](/tutorial/additional-tutorials/) to check out for more guided use cases.
-
-This is just the beginning. Keep going!
-
-- Did you build something cool? Share it on Twitter, tag [#buildwithgatsby](https://twitter.com/search?q=%23buildwithgatsby), and [@mention us](https://twitter.com/gatsbyjs)!
-- Did you write a cool blog post about what you learned? Share that, too!
-- Contribute! Take a stroll through [open issues](https://github.com/gatsbyjs/gatsby/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) on the gatsby repo and [become a contributor](/contributing/how-to-contribute/).
-
-Check out the ["how to contribute"](/contributing/how-to-contribute/) docs for even more ideas.
-
-We can't wait to see what you do 😄.
+- https://www.gatsbyjs.org/tutorial/part-eight/
