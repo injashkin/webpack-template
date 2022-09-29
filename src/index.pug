@@ -1,6 +1,13 @@
-html
+doctype html
+html(lang= 'ru')
   head
     meta(charset='utf-8')
     title= 'Быстрый запуск Webpack'
   body
     p Данный файл откомпилирован шаблонизатором Pug
+    img(src=require('./images/image.png') alt='Загрузка изображений с помощью Webpack')
+
+    :markdown-it(linkify langPrefix='highlight-')
+      ## Markdown документ
+
+      - Написано на **Markdown**
