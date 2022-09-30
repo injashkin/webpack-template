@@ -7,6 +7,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'index.[hash].js',
+    assetModuleFilename: path.join('images', '[name].[hash][ext]'),
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -34,8 +35,16 @@ module.exports = {
         use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'],
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        test: /\.(png|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
+      },
+      {
+        test: /\.svg$/,
+        type: 'asset/resource',
+        generator: {
+          filename: path.join('icons', '[name].[hash][ext]'),
+        },
+        //use: 'svgo-loader',
       },
     ],
   },
@@ -52,6 +61,7 @@ module.exports = {
               ['jpegtran', { progressive: true }],
               ['optipng', { optimizationLevel: 5 }],
               // Svgo configuration here https://github.com/svg/svgo#configuration
+              /*
               [
                 'svgo',
                 {
@@ -74,6 +84,7 @@ module.exports = {
                   ],
                 },
               ],
+              */
             ],
           },
         },

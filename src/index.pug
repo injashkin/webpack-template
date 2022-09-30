@@ -5,7 +5,10 @@ html(lang= 'ru')
     title= 'Быстрый запуск Webpack'
   body
     p Данный файл откомпилирован шаблонизатором Pug
-    img(src=require('./images/image.png') alt='Загрузка изображений с помощью Webpack')
+    .logo__img_png
+      img(src=require('./images/image.png') alt='Загрузка PNG изображений с помощью Webpack')
+    .logo__img_svg
+      img(src=require('./images/logo.svg'), alt='Загрузка SVG изображений с помощью Webpack')
 
     :markdown-it(linkify langPrefix='highlight-')
       ## Markdown документ
