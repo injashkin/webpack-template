@@ -1,6 +1,9 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const FileManagerPlugin = require('filemanager-webpack-plugin');
 const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
+
+const SpriteLoaderPlugin = require('svg-sprite-loader/plugin');
 
 module.exports = {
   entry: path.join(__dirname, 'src', 'index.js'),
@@ -14,6 +17,14 @@ module.exports = {
       template: path.join(__dirname, 'src', 'index.pug'),
       filename: 'index.html',
     }),
+    new FileManagerPlugin({
+      events: {
+        onStart: {
+          delete: ['dist'],
+        },
+      },
+    }),
+    new SpriteLoaderPlugin(),
   ],
   devServer: {
     watchFiles: path.join(__dirname, 'src'),
@@ -41,10 +52,10 @@ module.exports = {
       {
         test: /\.svg$/,
         type: 'asset/resource',
-        generator: {
-          filename: path.join('icons', '[name].[hash][ext]'),
-        },
-        //use: 'svgo-loader',
+        //generator: {
+        //  filename: path.join('icons', '[name].[hash][ext]'),
+        //},
+        use: 'svg-sprite-loader',
       },
     ],
   },
@@ -54,37 +65,11 @@ module.exports = {
         minimizer: {
           implementation: ImageMinimizerPlugin.imageminMinify,
           options: {
-            // Lossless optimization with custom option
-            // Feel free to experiment with options for better result for you
             plugins: [
               ['gifsicle', { interlaced: true }],
               ['jpegtran', { progressive: true }],
               ['optipng', { optimizationLevel: 5 }],
-              // Svgo configuration here https://github.com/svg/svgo#configuration
-              /*
-              [
-                'svgo',
-                {
-                  plugins: [
-                    {
-                      name: 'preset-default',
-                      params: {
-                        overrides: {
-                          removeViewBox: false,
-                          addAttributesToSVGElement: {
-                            params: {
-                              attributes: [
-                                { xmlns: 'http://www.w3.org/2000/svg' },
-                              ],
-                            },
-                          },
-                        },
-                      },
-                    },
-                  ],
-                },
-              ],
-              */
+              ['svgo', { name: 'preset-default' }],
             ],
           },
         },
