@@ -3,8 +3,6 @@ const path = require('path');
 const FileManagerPlugin = require('filemanager-webpack-plugin');
 const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
 
-const SpriteLoaderPlugin = require('svg-sprite-loader/plugin');
-
 module.exports = {
   entry: path.join(__dirname, 'src', 'index.js'),
   output: {
@@ -24,7 +22,6 @@ module.exports = {
         },
       },
     }),
-    new SpriteLoaderPlugin(),
   ],
   devServer: {
     watchFiles: path.join(__dirname, 'src'),
@@ -52,10 +49,9 @@ module.exports = {
       {
         test: /\.svg$/,
         type: 'asset/resource',
-        //generator: {
-        //  filename: path.join('icons', '[name].[hash][ext]'),
-        //},
-        use: 'svg-sprite-loader',
+        generator: {
+          filename: path.join('icons', '[name].[hash][ext]'),
+        },
       },
     ],
   },
