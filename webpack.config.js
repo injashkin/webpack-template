@@ -2,15 +2,14 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const FileManagerPlugin = require('filemanager-webpack-plugin');
 const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
-
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   entry: path.join(__dirname, 'src', 'index.js'),
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'index.[hash].js',
-    assetModuleFilename: path.join('images', '[name].[hash][ext]'),
+    filename: 'index.[contenthash].js',
+    assetModuleFilename: path.join('images', '[name].[contenthash][ext]'),
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -24,7 +23,9 @@ module.exports = {
         },
       },
     }),
-    new MiniCssExtractPlugin(),
+    new MiniCssExtractPlugin({
+      filename: '[name].[contenthash].css',
+    }),
   ],
   devServer: {
     watchFiles: path.join(__dirname, 'src'),
@@ -58,7 +59,7 @@ module.exports = {
         test: /\.svg$/,
         type: 'asset/resource',
         generator: {
-          filename: path.join('icons', '[name].[hash][ext]'),
+          filename: path.join('icons', '[name].[contenthash][ext]'),
         },
       },
     ],
