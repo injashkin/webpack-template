@@ -21,6 +21,14 @@ module.exports = {
         onStart: {
           delete: ['dist'],
         },
+        onEnd: {
+          copy: [
+            {
+              source: path.join('src', 'static', 'robots.txt'),
+              destination: path.join('dist', 'robots.txt'),
+            },
+          ],
+        },
       },
     }),
     new MiniCssExtractPlugin({
