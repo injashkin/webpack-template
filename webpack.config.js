@@ -70,6 +70,10 @@ module.exports = {
           filename: path.join('icons', '[name].[contenthash][ext]'),
         },
       },
+      {
+        test: /\.(woff2?|eot|ttf|otf)$/i,
+        type: 'asset/resource',
+      },
     ],
   },
   optimization: {
