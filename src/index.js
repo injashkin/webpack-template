@@ -1,3 +1,6 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './components/app';
 import './main.scss';
 import './fonts/fonts.scss';
 
@@ -8,3 +11,5 @@ function component(text) {
 }
 
 document.body.prepend(component('Проект собран на Webpack'));
+
+ReactDOM.render(<App />, document.getElementById('root'));
