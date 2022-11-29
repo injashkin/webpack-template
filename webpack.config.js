@@ -13,7 +13,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'src', 'index.pug'),
+      template: path.join(__dirname, 'src', 'template.pug'),
       filename: 'index.html',
     }),
     new FileManagerPlugin({

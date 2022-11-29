@@ -10,9 +10,6 @@ html(lang= 'ru')
     .logo-svg
       img.logo2(src=require('./images/logo.svg'), alt='Загрузка SVG изображений с помощью Webpack')
 
-    :markdown-it(linkify langPrefix='highlight-')
-      ## Markdown документ
-
-      - Написано на **Markdown**
+    include:markdown-it ../content/article.md
       
     #root
