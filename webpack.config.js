@@ -24,8 +24,8 @@ module.exports = {
         onEnd: {
           copy: [
             {
-              source: path.join('src', 'static', 'robots.txt'),
-              destination: path.join('dist', 'robots.txt'),
+              source: path.join('src', 'static'),
+              destination: 'dist',
             },
           ],
         },
